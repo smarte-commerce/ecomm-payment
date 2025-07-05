@@ -84,3 +84,6 @@ public class EFraudCheck extends EBaseAudit {
     PENDING, APPROVED, DECLINED, REVIEW_REQUIRED
   }
 }
+
+
+

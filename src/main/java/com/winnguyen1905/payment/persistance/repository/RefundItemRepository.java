@@ -12,16 +12,16 @@ import com.winnguyen1905.payment.persistance.entity.ERefundItem;
 
 @Repository
 public interface RefundItemRepository extends JpaRepository<ERefundItem, UUID> {
-    
-    List<ERefundItem> findByRefundId(UUID refundId);
-    
-    List<ERefundItem> findByPaymentItemId(UUID paymentItemId);
-    
-    List<ERefundItem> findByOrderItemId(Long orderItemId);
-    
-    @Query("SELECT SUM(ri.totalAmount) FROM RefundItem ri WHERE ri.refund.id = :refundId")
-    Double sumTotalAmountByRefundId(@Param("refundId") UUID refundId);
-    
-    @Query("SELECT COUNT(ri) FROM RefundItem ri WHERE ri.paymentItem.id = :paymentItemId")
-    Long countByPaymentItemId(@Param("paymentItemId") UUID paymentItemId);
-} 
+
+  List<ERefundItem> findByRefundId(UUID refundId);
+
+  List<ERefundItem> findByPaymentItemId(UUID paymentItemId);
+
+  List<ERefundItem> findByOrderItemId(Long orderItemId);
+
+  @Query("SELECT SUM(ri.totalAmount) FROM RefundItem ri WHERE ri.refund.id = :refundId")
+  Double sumTotalAmountByRefundId(@Param("refundId") UUID refundId);
+
+  @Query("SELECT COUNT(ri) FROM RefundItem ri WHERE ri.paymentItem.id = :paymentItemId")
+  Long countByPaymentItemId(@Param("paymentItemId") UUID paymentItemId);
+}

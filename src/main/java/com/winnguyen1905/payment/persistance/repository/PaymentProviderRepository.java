@@ -12,12 +12,12 @@ import com.winnguyen1905.payment.persistance.entity.EPaymentProvider.ProviderTyp
 
 @Repository
 public interface PaymentProviderRepository extends JpaRepository<EPaymentProvider, UUID> {
-    
-    Optional<EPaymentProvider> findByProviderCode(String providerCode);
-    
-    List<EPaymentProvider> findByIsActiveTrue();
-    
-    List<EPaymentProvider> findByProviderType(ProviderType providerType);
-    
-    List<EPaymentProvider> findByProviderTypeAndIsActiveTrue(ProviderType providerType);
-} 
+
+  Optional<EPaymentProvider> findByProviderCode(String providerCode);
+
+  List<EPaymentProvider> findByIsActiveTrue();
+
+  List<EPaymentProvider> findByProviderType(ProviderType providerType);
+
+  List<EPaymentProvider> findByProviderTypeAndIsActiveTrue(ProviderType providerType);
+}

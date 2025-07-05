@@ -16,22 +16,22 @@ import com.winnguyen1905.payment.persistance.entity.EPaymentDispute.DisputeType;
 
 @Repository
 public interface PaymentDisputeRepository extends JpaRepository<EPaymentDispute, UUID> {
-    
-    Optional<EPaymentDispute> findByDisputeNumber(String disputeNumber);
-    
-    List<EPaymentDispute> findByPaymentId(UUID paymentId);
-    
-    List<EPaymentDispute> findByStatus(DisputeStatus status);
-    
-    List<EPaymentDispute> findByDisputeType(DisputeType disputeType);
-    
-    Optional<EPaymentDispute> findByProviderDisputeId(String providerDisputeId);
-    
-    @Query("SELECT pd FROM PaymentDispute pd WHERE pd.evidenceDueBy < :date AND pd.evidenceSubmitted = false")
-    List<EPaymentDispute> findDisputesWithEvidenceDueSoon(@Param("date") Instant date);
-    
-    List<EPaymentDispute> findByStatusAndEvidenceSubmittedFalse(DisputeStatus status);
-    
-    @Query("SELECT COUNT(pd) FROM PaymentDispute pd WHERE pd.payment.customerId = :customerId")
-    Long countDisputesByCustomerId(@Param("customerId") Long customerId);
-} 
+
+  Optional<EPaymentDispute> findByDisputeNumber(String disputeNumber);
+
+  List<EPaymentDispute> findByPaymentId(UUID paymentId);
+
+  List<EPaymentDispute> findByStatus(DisputeStatus status);
+
+  List<EPaymentDispute> findByDisputeType(DisputeType disputeType);
+
+  Optional<EPaymentDispute> findByProviderDisputeId(String providerDisputeId);
+
+  @Query("SELECT pd FROM PaymentDispute pd WHERE pd.evidenceDueBy < :date AND pd.evidenceSubmitted = false")
+  List<EPaymentDispute> findDisputesWithEvidenceDueSoon(@Param("date") Instant date);
+
+  List<EPaymentDispute> findByStatusAndEvidenceSubmittedFalse(DisputeStatus status);
+
+  @Query("SELECT COUNT(pd) FROM PaymentDispute pd WHERE pd.payment.customerId = :customerId")
+  Long countDisputesByCustomerId(@Param("customerId") Long customerId);
+}

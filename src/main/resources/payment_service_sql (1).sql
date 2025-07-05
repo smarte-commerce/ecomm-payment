@@ -340,6 +340,161 @@ CREATE TABLE payment_audit_log (
 );
 
 -- =============================================
+-- MULTI-VENDOR MARKETPLACE PAYMENT TABLES
+-- =============================================
+
+-- Vendors table (for platform marketplace)
+CREATE TABLE vendors (
+    vendor_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    vendor_name VARCHAR(100) NOT NULL,
+    vendor_code VARCHAR(50) UNIQUE NOT NULL,
+    business_name VARCHAR(150) NOT NULL,
+    business_type ENUM('individual', 'company', 'partnership', 'non_profit') NOT NULL,
+    tax_identifier VARCHAR(50),
+    contact_email VARCHAR(100) NOT NULL,
+    contact_phone VARCHAR(20),
+    bank_account_details JSON,
+    payment_details JSON,
+    commission_rate DECIMAL(5,2) NOT NULL DEFAULT 10.00, -- Default 10% commission
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_vendor_code (vendor_code),
+    INDEX idx_is_active (is_active)
+);
+
+-- Payment methods enum update for COD
+ALTER TABLE payment_methods
+MODIFY COLUMN method_type ENUM('credit_card', 'debit_card', 'paypal', 'apple_pay', 'google_pay', 'bank_account', 'crypto_wallet', 'cash_on_delivery') NOT NULL;
+
+-- Order delivery status table
+CREATE TABLE order_deliveries (
+    delivery_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT NOT NULL,
+    payment_id BIGINT NOT NULL,
+    tracking_number VARCHAR(100),
+    carrier_name VARCHAR(100),
+    shipping_provider VARCHAR(100),
+    status ENUM('pending', 'shipped', 'out_for_delivery', 'delivered', 'failed', 'returned') DEFAULT 'pending',
+    delivery_method ENUM('standard', 'express', 'same_day', 'platform_logistics', 'vendor_logistics') NOT NULL,
+    is_cod BOOLEAN DEFAULT FALSE,
+    estimated_delivery_date TIMESTAMP NULL,
+    actual_delivery_date TIMESTAMP NULL,
+    customer_confirmation_status ENUM('pending', 'confirmed', 'disputed', 'auto_confirmed') DEFAULT 'pending',
+    customer_confirmation_date TIMESTAMP NULL,
+    confirmation_deadline TIMESTAMP NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (payment_id) REFERENCES payments(payment_id),
+    INDEX idx_order_id (order_id),
+    INDEX idx_payment_id (payment_id),
+    INDEX idx_status (status),
+    INDEX idx_is_cod (is_cod),
+    INDEX idx_customer_confirmation_status (customer_confirmation_status)
+);
+
+-- Payment escrow table
+CREATE TABLE payment_escrows (
+    escrow_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    payment_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
+    vendor_id BIGINT NOT NULL,
+    escrow_number VARCHAR(50) UNIQUE NOT NULL,
+    escrow_amount DECIMAL(10,2) NOT NULL CHECK (escrow_amount > 0),
+    platform_fee_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    vendor_payout_amount DECIMAL(10,2) NOT NULL,
+    currency VARCHAR(3) NOT NULL DEFAULT 'USD',
+    status ENUM('pending', 'held', 'released', 'refunded', 'partially_released', 'partially_refunded') DEFAULT 'pending',
+    release_conditions JSON, -- {"delivery_confirmation": true, "days_after_delivery": 3}
+    release_eligible_after TIMESTAMP NULL,
+    released_at TIMESTAMP NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (payment_id) REFERENCES payments(payment_id),
+    FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id),
+    INDEX idx_payment_id (payment_id),
+    INDEX idx_order_id (order_id),
+    INDEX idx_vendor_id (vendor_id),
+    INDEX idx_status (status),
+    INDEX idx_release_eligible_after (release_eligible_after)
+);
+
+-- Vendor settlements table
+CREATE TABLE vendor_settlements (
+    settlement_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    vendor_id BIGINT NOT NULL,
+    settlement_number VARCHAR(50) UNIQUE NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL CHECK (total_amount > 0),
+    currency VARCHAR(3) NOT NULL DEFAULT 'USD',
+    status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
+    payment_method JSON,
+    transaction_reference VARCHAR(100),
+    settlement_period_start TIMESTAMP NOT NULL,
+    settlement_period_end TIMESTAMP NOT NULL,
+    items_count INT NOT NULL DEFAULT 0,
+    processing_started_at TIMESTAMP NULL,
+    completed_at TIMESTAMP NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id),
+    INDEX idx_vendor_id (vendor_id),
+    INDEX idx_settlement_number (settlement_number),
+    INDEX idx_status (status),
+    INDEX idx_settlement_period (settlement_period_start, settlement_period_end)
+);
+
+-- Vendor settlement items table
+CREATE TABLE vendor_settlement_items (
+    settlement_item_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    settlement_id BIGINT NOT NULL,
+    escrow_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
+    platform_fee_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    currency VARCHAR(3) NOT NULL DEFAULT 'USD',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (settlement_id) REFERENCES vendor_settlements(settlement_id) ON DELETE CASCADE,
+    FOREIGN KEY (escrow_id) REFERENCES payment_escrows(escrow_id),
+    INDEX idx_settlement_id (settlement_id),
+    INDEX idx_escrow_id (escrow_id),
+    INDEX idx_order_id (order_id)
+);
+
+-- COD collections table
+CREATE TABLE cod_collections (
+    collection_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    payment_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
+    delivery_id BIGINT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
+    currency VARCHAR(3) NOT NULL DEFAULT 'USD',
+    status ENUM('pending', 'collected', 'failed', 'cancelled') DEFAULT 'pending',
+    collector_id BIGINT,
+    collection_date TIMESTAMP NULL,
+    verified_by BIGINT,
+    verification_date TIMESTAMP NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (payment_id) REFERENCES payments(payment_id),
+    FOREIGN KEY (delivery_id) REFERENCES order_deliveries(delivery_id),
+    INDEX idx_payment_id (payment_id),
+    INDEX idx_order_id (order_id),
+    INDEX idx_delivery_id (delivery_id),
+    INDEX idx_status (status),
+    INDEX idx_collection_date (collection_date)
+);
+
+-- =============================================
 -- SAMPLE DATA FOR PAYMENT SERVICE
 -- =============================================
 

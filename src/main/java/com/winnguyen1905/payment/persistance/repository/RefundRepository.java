@@ -12,14 +12,14 @@ import com.winnguyen1905.payment.persistance.entity.ERefund.RefundStatus;
 
 @Repository
 public interface RefundRepository extends JpaRepository<ERefund, UUID> {
-    
-    Optional<ERefund> findByRefundNumber(String refundNumber);
-    
-    List<ERefund> findByPaymentId(UUID paymentId);
-    
-    List<ERefund> findByOrderId(Long orderId);
-    
-    List<ERefund> findByStatus(RefundStatus status);
-    
-    Optional<ERefund> findByProviderRefundId(String providerRefundId);
-} 
+
+  Optional<ERefund> findByRefundNumber(String refundNumber);
+
+  List<ERefund> findByPaymentId(UUID paymentId);
+
+  List<ERefund> findByOrderId(Long orderId);
+
+  List<ERefund> findByStatus(RefundStatus status);
+
+  Optional<ERefund> findByProviderRefundId(String providerRefundId);
+}

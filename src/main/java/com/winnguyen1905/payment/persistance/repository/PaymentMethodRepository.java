@@ -14,19 +14,19 @@ import com.winnguyen1905.payment.persistance.entity.EPaymentMethod.MethodType;
 
 @Repository
 public interface PaymentMethodRepository extends JpaRepository<EPaymentMethod, UUID> {
-    
-    List<EPaymentMethod> findByCustomerId(Long customerId);
-    
-    List<EPaymentMethod> findByCustomerIdAndIsActiveTrue(Long customerId);
-    
-    Optional<EPaymentMethod> findByCustomerIdAndIsDefaultTrue(Long customerId);
-    
-    List<EPaymentMethod> findByMethodType(MethodType methodType);
-    
-    Optional<EPaymentMethod> findByProviderPaymentMethodId(String providerPaymentMethodId);
-    
-    @Query("SELECT pm FROM PaymentMethod pm WHERE pm.customerId = :customerId AND pm.methodType = :methodType AND pm.isActive = true")
-    List<EPaymentMethod> findActiveMethodsByCustomerAndType(
-        @Param("customerId") Long customerId, 
-        @Param("methodType") MethodType methodType);
-} 
+
+  List<EPaymentMethod> findByCustomerId(Long customerId);
+
+  List<EPaymentMethod> findByCustomerIdAndIsActiveTrue(Long customerId);
+
+  Optional<EPaymentMethod> findByCustomerIdAndIsDefaultTrue(Long customerId);
+
+  List<EPaymentMethod> findByMethodType(MethodType methodType);
+
+  Optional<EPaymentMethod> findByProviderPaymentMethodId(String providerPaymentMethodId);
+
+  @Query("SELECT pm FROM PaymentMethod pm WHERE pm.customerId = :customerId AND pm.methodType = :methodType AND pm.isActive = true")
+  List<EPaymentMethod> findActiveMethodsByCustomerAndType(
+      @Param("customerId") Long customerId,
+      @Param("methodType") MethodType methodType);
+}
