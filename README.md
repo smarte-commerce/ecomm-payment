@@ -116,21 +116,192 @@ The service follows a layered architecture with:
 - Gateway integration handling
 - Refund completion tracking
 
-### 9. Subscription APIs (DTOs Created)
-**Features:**
-- Subscription lifecycle management
-- Billing cycle handling
-- Trial period management
-- Payment method association
-- Provider integration
+### 9. Subscription APIs
+**Base URL:** `/api/v1/subscriptions`
 
-### 10. Commission Rule APIs (DTOs Created)
-**Features:**
-- Commission rate management
-- Rule-based commission calculation
-- Vendor-specific rules
-- Category-based commission
-- Time-based rule activation
+- `POST /` - Create subscription
+- `GET /{id}` - Get subscription by ID
+- `GET /number/{subscriptionNumber}` - Get subscription by number
+- `GET /provider/{providerSubscriptionId}` - Get subscription by provider ID
+- `GET /customer/{customerId}` - Get subscriptions by customer
+- `GET /status/{status}` - Get subscriptions by status
+- `GET /customer/{customerId}/status/{status}` - Get subscriptions by customer and status
+- `GET /plan/{planId}` - Get subscriptions by plan
+- `GET /renewals/due/{beforeDate}` - Get subscriptions ready for renewal
+- `GET /trials/due/{beforeDate}` - Get trials ready for conversion
+- `PUT /{id}` - Update subscription
+- `PUT /{id}/status` - Update subscription status
+- `PUT /{id}/cancel` - Cancel subscription
+- `PUT /{id}/reactivate` - Reactivate subscription
+- `PUT /{id}/renew` - Renew subscription
+- `PUT /{id}/convert-trial` - Convert trial to active
+- `PUT /{id}/payment-method` - Update payment method
+- `PUT /{id}/metadata` - Update metadata
+- `PUT /{id}/pause` - Pause subscription
+- `PUT /{id}/resume` - Resume subscription
+- `DELETE /{id}` - Delete subscription
+
+### 10. Commission Rule APIs
+**Base URL:** `/api/v1/commission-rules`
+
+- `POST /` - Create commission rule
+- `GET /{id}` - Get commission rule by ID
+- `GET /` - Get all commission rules
+- `GET /vendor/{vendorId}` - Get rules by vendor
+- `GET /category/{categoryId}` - Get rules by category
+- `GET /type/{ruleType}` - Get rules by type
+- `GET /active` - Get active rules
+- `GET /effective/{effectiveDate}` - Get rules effective at date
+- `GET /vendor/{vendorId}/category/{categoryId}` - Get rules by vendor and category
+- `GET /best-applicable` - Get best applicable rule for calculation
+- `POST /calculate` - Calculate commission
+- `POST /calculate/{ruleId}` - Calculate commission by specific rule
+- `PUT /{id}` - Update commission rule
+- `PUT /{id}/activate` - Activate rule
+- `PUT /{id}/deactivate` - Deactivate rule
+- `PUT /{id}/priority` - Update priority
+- `PUT /{id}/dates` - Update effective dates
+- `PUT /{id}/rate` - Update commission rate
+- `DELETE /{id}` - Delete commission rule
+- `GET /conflicts` - Check for conflicting rules
+- `GET /expiring/{beforeDate}` - Get rules expiring soon
+
+### 11. Payment Webhook APIs
+**Base URL:** `/api/v1/webhooks`
+
+- `POST /` - Create payment webhook
+- `GET /{id}` - Get webhook by ID
+- `GET /` - Get all webhooks
+- `GET /provider/{providerId}` - Get webhooks by provider
+- `GET /payment/{paymentId}` - Get webhooks by payment
+- `GET /subscription/{subscriptionId}` - Get webhooks by subscription
+- `GET /type/{webhookType}` - Get webhooks by type
+- `GET /event/{eventType}` - Get webhooks by event type
+- `GET /event-id/{eventId}` - Get webhook by event ID
+- `GET /processed` - Get processed webhooks
+- `GET /unprocessed` - Get unprocessed webhooks
+- `GET /errors` - Get webhooks with errors
+- `GET /received-between` - Get webhooks within date range
+- `GET /high-retry/{minAttempts}` - Get webhooks with high retry count
+- `PUT /{id}` - Update webhook
+- `PUT /{id}/process` - Process webhook
+- `PUT /{id}/mark-processed` - Mark as processed
+- `PUT /{id}/mark-failed` - Mark as failed
+- `PUT /{id}/retry` - Retry processing
+- `PUT /{id}/data` - Update webhook data
+- `POST /verify-signature` - Verify webhook signature
+- `POST /process-payload` - Process webhook payload
+- `POST /auto-retry` - Auto-retry failed webhooks
+- `DELETE /{id}` - Delete webhook
+- `DELETE /cleanup/{olderThan}` - Cleanup old webhooks
+
+### 12. Subscription Invoice APIs
+**Base URL:** `/api/v1/subscription-invoices`
+
+- `POST /` - Create subscription invoice
+- `GET /{id}` - Get invoice by ID
+- `GET /number/{invoiceNumber}` - Get invoice by number
+- `GET /provider/{providerInvoiceId}` - Get invoice by provider ID
+- `GET /subscription/{subscriptionId}` - Get invoices by subscription
+- `GET /payment/{paymentId}` - Get invoices by payment
+- `GET /status/{status}` - Get invoices by status
+- `GET /overdue/{asOfDate}` - Get overdue invoices
+- `GET /status/{status}/due-before/{beforeDate}` - Get invoices by status and due date
+- `GET /period` - Get invoices within period
+- `GET /high-attempts/{minAttempts}` - Get invoices with high attempt count
+- `PUT /{id}` - Update invoice
+- `PUT /{id}/status` - Update invoice status
+- `PUT /{id}/mark-paid` - Mark as paid
+- `PUT /{id}/mark-uncollectible` - Mark as uncollectible
+- `PUT /{id}/void` - Void invoice
+- `PUT /{id}/finalize` - Finalize draft invoice
+- `PUT /{id}/next-attempt` - Update next payment attempt
+- `PUT /{id}/increment-attempts` - Increment attempt count
+- `PUT /{id}/metadata` - Update metadata
+- `POST /generate/{subscriptionId}` - Generate next invoice
+- `POST /process-retries` - Process payment retries
+- `DELETE /{id}` - Delete invoice
+
+## Microservice Integration - Feign Clients
+
+The payment service integrates with external microservices through Feign clients for comprehensive payment ecosystem functionality:
+
+### 1. PaymentGatewayServiceClient
+**Purpose:** External payment gateway integration
+**Endpoints:**
+- Payment processing (create, confirm, capture, cancel)
+- Refund management
+- Customer management
+- Payment methods
+- Subscription handling
+- Webhook management
+- Balance and payout operations
+
+### 2. InventoryServiceClient
+**Purpose:** Product availability and stock management
+**Endpoints:**
+- Availability checks
+- Stock reservations
+- Stock updates
+- Product catalog operations
+- Inventory tracking
+- Low stock alerts
+
+### 3. TaxServiceClient
+**Purpose:** Tax calculation and compliance
+**Endpoints:**
+- Tax calculation (single/batch)
+- Tax rates management
+- Exemption checking
+- Compliance reporting
+- Tax filing
+- Tax authority integration
+
+### 4. CurrencyServiceClient
+**Purpose:** Currency conversion and exchange rates
+**Endpoints:**
+- Currency conversion operations
+- Exchange rate management
+- Currency information
+- Rate provider operations
+- Volatility analytics
+
+### 5. AnalyticsServiceClient
+**Purpose:** Payment analytics and reporting
+**Endpoints:**
+- Payment analytics
+- Revenue analytics
+- Customer analytics
+- Fraud analytics
+- Performance analytics
+- Report generation
+- Dashboard operations
+
+### 6. AuditServiceClient
+**Purpose:** Audit logging and compliance tracking
+**Endpoints:**
+- Audit log operations
+- Security events
+- Compliance operations
+- Data retention
+- Change tracking
+- Access control audit
+
+## Service Implementations
+
+The following service implementations provide comprehensive business logic:
+
+### Core Payment Services
+- **SubscriptionServiceImpl** - Complete subscription lifecycle management
+- **CommissionRuleServiceImpl** - Advanced commission calculation with conflict checking
+- **PaymentWebhookServiceImpl** - Webhook processing with retry mechanisms
+- **SubscriptionInvoiceServiceImpl** - Invoice management with payment retry logic
+
+### Repository Layer
+- **CommissionRuleRepository** - Commission rule queries with date-based filtering
+- **PaymentWebhookRepository** - Webhook tracking with processing status
+- **SubscriptionRepository** - Subscription queries with status and period filtering
+- **SubscriptionInvoiceRepository** - Invoice queries with overdue tracking
 
 ## Additional Entities Available for API Generation
 
