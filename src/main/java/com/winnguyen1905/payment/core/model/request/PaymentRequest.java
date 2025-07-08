@@ -22,46 +22,45 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentRequest {
-    
-    @NotNull(message = "Order ID cannot be null")
-    private Long orderId;
-    
-    @NotNull(message = "Customer ID cannot be null")
-    private Long customerId;
-    
-    @NotBlank(message = "Payment number cannot be blank")
-    private String paymentNumber;
-    
-    private UUID providerId;
-    
-    private UUID paymentMethodId;
-    
-    private String paymentIntentId;
-    
-    @NotNull(message = "Amount cannot be null")
-    @Positive(message = "Amount must be positive")
-    private BigDecimal amount;
-    
-    @NotBlank(message = "Currency cannot be blank")
-    @Size(min = 3, max = 3, message = "Currency must be 3 characters")
-    private String currency;
-    
-    @NotNull(message = "Fee amount cannot be null")
-    private BigDecimal feeAmount;
-    
-    @NotNull(message = "Net amount cannot be null")
-    private BigDecimal netAmount;
-    
-    @NotNull(message = "Payment type cannot be null")
-    private PaymentType paymentType;
-    
-    private String description;
-    
-    private String metadata;
-    
-    private String authorizationCode;
-    
-    private String transactionId;
-    
-    private String gatewayResponse;
-} 
+  @NotNull(message = "Order ID cannot be null")
+  private Long orderId;
+
+  @NotNull(message = "Customer ID cannot be null")
+  private Long customerId;
+
+  @NotBlank(message = "Payment number cannot be blank")
+  private String paymentNumber;
+
+  private UUID providerId;
+
+  private UUID paymentMethodId;
+
+  private String paymentIntentId;
+
+  @NotNull(message = "Amount cannot be null")
+  @Positive(message = "Amount must be positive")
+  private BigDecimal amount;
+
+  @NotBlank(message = "Currency cannot be blank")
+  @Size(min = 3, max = 3, message = "Currency must be 3 characters")
+  private String currency;
+
+  @NotNull(message = "Fee amount cannot be null")
+  private BigDecimal feeAmount;
+
+  @NotNull(message = "Net amount cannot be null")
+  private BigDecimal netAmount;
+
+  @NotNull(message = "Payment type cannot be null")
+  private PaymentType paymentType;
+
+  private String description;
+
+  private String metadata;
+
+  private String authorizationCode;
+
+  private String transactionId;
+
+  private String gatewayResponse;
+}
