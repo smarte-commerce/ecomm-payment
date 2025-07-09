@@ -27,120 +27,119 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/payments/core")
 public class PaymentController {
 
-    private final PaymentService paymentService;
+  private final PaymentService paymentService;
 
-    @Autowired
-    public PaymentController(PaymentService paymentService) {
-        this.paymentService = paymentService;
-    }
+  public PaymentController(PaymentService paymentService) {
+    this.paymentService = paymentService;
+  }
 
-    @PostMapping
-    public ResponseEntity<PaymentResponse> createPayment(@Valid @RequestBody PaymentRequest request) {
-        PaymentResponse response = paymentService.createPayment(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+  @PostMapping
+  public ResponseEntity<PaymentResponse> createPayment(@Valid @RequestBody PaymentRequest request) {
+    PaymentResponse response = paymentService.createPayment(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PaymentResponse> getPayment(@PathVariable UUID id) {
-        PaymentResponse response = paymentService.getPaymentById(id);
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<PaymentResponse> getPayment(@PathVariable UUID id) {
+    PaymentResponse response = paymentService.getPaymentById(id);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/number/{paymentNumber}")
-    public ResponseEntity<PaymentResponse> getPaymentByNumber(@PathVariable String paymentNumber) {
-        PaymentResponse response = paymentService.getPaymentByPaymentNumber(paymentNumber);
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/number/{paymentNumber}")
+  public ResponseEntity<PaymentResponse> getPaymentByNumber(@PathVariable String paymentNumber) {
+    PaymentResponse response = paymentService.getPaymentByPaymentNumber(paymentNumber);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/transaction/{transactionId}")
-    public ResponseEntity<PaymentResponse> getPaymentByTransactionId(@PathVariable String transactionId) {
-        PaymentResponse response = paymentService.getPaymentByTransactionId(transactionId);
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/transaction/{transactionId}")
+  public ResponseEntity<PaymentResponse> getPaymentByTransactionId(@PathVariable String transactionId) {
+    PaymentResponse response = paymentService.getPaymentByTransactionId(transactionId);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/order/{orderId}")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByOrderId(@PathVariable Long orderId) {
-        List<PaymentResponse> response = paymentService.getPaymentsByOrderId(orderId);
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/order/{orderId}")
+  public ResponseEntity<List<PaymentResponse>> getPaymentsByOrderId(@PathVariable Long orderId) {
+    List<PaymentResponse> response = paymentService.getPaymentsByOrderId(orderId);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByCustomerId(@PathVariable Long customerId) {
-        List<PaymentResponse> response = paymentService.getPaymentsByCustomerId(customerId);
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/customer/{customerId}")
+  public ResponseEntity<List<PaymentResponse>> getPaymentsByCustomerId(@PathVariable Long customerId) {
+    List<PaymentResponse> response = paymentService.getPaymentsByCustomerId(customerId);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByStatus(@PathVariable PaymentStatus status) {
-        List<PaymentResponse> response = paymentService.getPaymentsByStatus(status);
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/status/{status}")
+  public ResponseEntity<List<PaymentResponse>> getPaymentsByStatus(@PathVariable PaymentStatus status) {
+    List<PaymentResponse> response = paymentService.getPaymentsByStatus(status);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/order/{orderId}/status/{status}")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByOrderIdAndStatus(
-            @PathVariable Long orderId,
-            @PathVariable PaymentStatus status) {
-        List<PaymentResponse> response = paymentService.getPaymentsByOrderIdAndStatus(orderId, status);
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/order/{orderId}/status/{status}")
+  public ResponseEntity<List<PaymentResponse>> getPaymentsByOrderIdAndStatus(
+      @PathVariable Long orderId,
+      @PathVariable PaymentStatus status) {
+    List<PaymentResponse> response = paymentService.getPaymentsByOrderIdAndStatus(orderId, status);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/customer/{customerId}/status/{status}")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByCustomerIdAndStatus(
-            @PathVariable Long customerId,
-            @PathVariable PaymentStatus status) {
-        List<PaymentResponse> response = paymentService.getPaymentsByCustomerIdAndStatus(customerId, status);
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/customer/{customerId}/status/{status}")
+  public ResponseEntity<List<PaymentResponse>> getPaymentsByCustomerIdAndStatus(
+      @PathVariable Long customerId,
+      @PathVariable PaymentStatus status) {
+    List<PaymentResponse> response = paymentService.getPaymentsByCustomerIdAndStatus(customerId, status);
+    return ResponseEntity.ok(response);
+  }
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<PaymentResponse> updatePaymentStatus(
-            @PathVariable UUID id,
-            @RequestParam PaymentStatus status) {
-        PaymentResponse response = paymentService.updatePaymentStatus(id, status);
-        return ResponseEntity.ok(response);
-    }
+  @PutMapping("/{id}/status")
+  public ResponseEntity<PaymentResponse> updatePaymentStatus(
+      @PathVariable UUID id,
+      @RequestParam PaymentStatus status) {
+    PaymentResponse response = paymentService.updatePaymentStatus(id, status);
+    return ResponseEntity.ok(response);
+  }
 
-    @PutMapping("/{id}/authorize")
-    public ResponseEntity<PaymentResponse> authorizePayment(
-            @PathVariable UUID id,
-            @RequestParam String authorizationCode) {
-        PaymentResponse response = paymentService.authorizePayment(id, authorizationCode);
-        return ResponseEntity.ok(response);
-    }
+  @PutMapping("/{id}/authorize")
+  public ResponseEntity<PaymentResponse> authorizePayment(
+      @PathVariable UUID id,
+      @RequestParam String authorizationCode) {
+    PaymentResponse response = paymentService.authorizePayment(id, authorizationCode);
+    return ResponseEntity.ok(response);
+  }
 
-    @PutMapping("/{id}/capture")
-    public ResponseEntity<PaymentResponse> capturePayment(
-            @PathVariable UUID id,
-            @RequestParam(required = false) BigDecimal captureAmount) {
-        PaymentResponse response = paymentService.capturePayment(id, captureAmount);
-        return ResponseEntity.ok(response);
-    }
+  @PutMapping("/{id}/capture")
+  public ResponseEntity<PaymentResponse> capturePayment(
+      @PathVariable UUID id,
+      @RequestParam(required = false) BigDecimal captureAmount) {
+    PaymentResponse response = paymentService.capturePayment(id, captureAmount);
+    return ResponseEntity.ok(response);
+  }
 
-    @PutMapping("/{id}/complete")
-    public ResponseEntity<PaymentResponse> completePayment(@PathVariable UUID id) {
-        PaymentResponse response = paymentService.completePayment(id);
-        return ResponseEntity.ok(response);
-    }
+  @PutMapping("/{id}/complete")
+  public ResponseEntity<PaymentResponse> completePayment(@PathVariable UUID id) {
+    PaymentResponse response = paymentService.completePayment(id);
+    return ResponseEntity.ok(response);
+  }
 
-    @PutMapping("/{id}/fail")
-    public ResponseEntity<PaymentResponse> failPayment(
-            @PathVariable UUID id,
-            @RequestParam String failureReason) {
-        PaymentResponse response = paymentService.failPayment(id, failureReason);
-        return ResponseEntity.ok(response);
-    }
+  @PutMapping("/{id}/fail")
+  public ResponseEntity<PaymentResponse> failPayment(
+      @PathVariable UUID id,
+      @RequestParam String failureReason) {
+    PaymentResponse response = paymentService.failPayment(id, failureReason);
+    return ResponseEntity.ok(response);
+  }
 
-    @PutMapping("/{id}/cancel")
-    public ResponseEntity<PaymentResponse> cancelPayment(@PathVariable UUID id) {
-        PaymentResponse response = paymentService.cancelPayment(id);
-        return ResponseEntity.ok(response);
-    }
+  @PutMapping("/{id}/cancel")
+  public ResponseEntity<PaymentResponse> cancelPayment(@PathVariable UUID id) {
+    PaymentResponse response = paymentService.cancelPayment(id);
+    return ResponseEntity.ok(response);
+  }
 
-    @PutMapping("/{id}/metadata")
-    public ResponseEntity<PaymentResponse> updatePaymentMetadata(
-            @PathVariable UUID id,
-            @RequestParam String metadata) {
-        PaymentResponse response = paymentService.updatePaymentMetadata(id, metadata);
-        return ResponseEntity.ok(response);
-    }
-} 
+  @PutMapping("/{id}/metadata")
+  public ResponseEntity<PaymentResponse> updatePaymentMetadata(
+      @PathVariable UUID id,
+      @RequestParam String metadata) {
+    PaymentResponse response = paymentService.updatePaymentMetadata(id, metadata);
+    return ResponseEntity.ok(response);
+  }
+}
