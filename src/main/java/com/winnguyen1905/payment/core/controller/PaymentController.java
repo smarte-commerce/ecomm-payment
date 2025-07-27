@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.winnguyen1905.payment.core.model.request.PaymentRequest;
+import com.winnguyen1905.payment.core.model.request.PaymentSessionRequest;
 import com.winnguyen1905.payment.core.model.response.PaymentResponse;
+import com.winnguyen1905.payment.core.model.response.PaymentSessionResponse;
 import com.winnguyen1905.payment.core.service.PaymentService;
 import com.winnguyen1905.payment.persistance.entity.EPayment.PaymentStatus;
 
@@ -31,6 +33,12 @@ public class PaymentController {
 
   public PaymentController(PaymentService paymentService) {
     this.paymentService = paymentService;
+  }
+
+  @PostMapping("/create")
+  public ResponseEntity<PaymentSessionResponse> createPaymentSession(@Valid @RequestBody PaymentSessionRequest request) {
+    PaymentSessionResponse response = paymentService.createPaymentSession(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @PostMapping

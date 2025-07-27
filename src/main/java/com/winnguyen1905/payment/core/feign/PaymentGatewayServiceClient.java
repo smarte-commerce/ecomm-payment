@@ -21,6 +21,24 @@ import com.winnguyen1905.payment.core.model.response.RestResponse;
 public interface PaymentGatewayServiceClient {
     
     /**
+     * Create a checkout session for hosted payment
+     * 
+     * @param request Checkout session creation request
+     * @return Checkout session details with payment URL
+     */
+    @PostMapping("/api/v1/checkout-sessions")
+    RestResponse<CheckoutSessionResponse> createCheckoutSession(@RequestBody CheckoutSessionRequest request);
+    
+    /**
+     * Retrieve checkout session by ID
+     * 
+     * @param sessionId Checkout session ID
+     * @return Checkout session details
+     */
+    @GetMapping("/api/v1/checkout-sessions/{sessionId}")
+    RestResponse<CheckoutSessionResponse> getCheckoutSession(@PathVariable("sessionId") String sessionId);
+    
+    /**
      * Create a payment intent with the payment provider
      * 
      * @param request Payment intent creation request
@@ -532,5 +550,107 @@ public interface PaymentGatewayServiceClient {
         private Long arrivalDate;
         
         // Getters and setters
+    }
+    
+    /**
+     * Checkout session request DTO
+     */
+    class CheckoutSessionRequest {
+        private BigDecimal amount;
+        private String currency;
+        private String customerId;
+        private String orderId;
+        private String successUrl;
+        private String cancelUrl;
+        private String description;
+        private String[] paymentMethodTypes;
+        private Long expiresAt;
+        private String metadata;
+        
+        // Getters and setters
+        public BigDecimal getAmount() { return amount; }
+        public void setAmount(BigDecimal amount) { this.amount = amount; }
+        
+        public String getCurrency() { return currency; }
+        public void setCurrency(String currency) { this.currency = currency; }
+        
+        public String getCustomerId() { return customerId; }
+        public void setCustomerId(String customerId) { this.customerId = customerId; }
+        
+        public String getOrderId() { return orderId; }
+        public void setOrderId(String orderId) { this.orderId = orderId; }
+        
+        public String getSuccessUrl() { return successUrl; }
+        public void setSuccessUrl(String successUrl) { this.successUrl = successUrl; }
+        
+        public String getCancelUrl() { return cancelUrl; }
+        public void setCancelUrl(String cancelUrl) { this.cancelUrl = cancelUrl; }
+        
+        public String getDescription() { return description; }
+        public void setDescription(String description) { this.description = description; }
+        
+        public String[] getPaymentMethodTypes() { return paymentMethodTypes; }
+        public void setPaymentMethodTypes(String[] paymentMethodTypes) { this.paymentMethodTypes = paymentMethodTypes; }
+        
+        public Long getExpiresAt() { return expiresAt; }
+        public void setExpiresAt(Long expiresAt) { this.expiresAt = expiresAt; }
+        
+        public String getMetadata() { return metadata; }
+        public void setMetadata(String metadata) { this.metadata = metadata; }
+    }
+    
+    /**
+     * Checkout session response DTO
+     */
+    class CheckoutSessionResponse {
+        private String id;
+        private String url;
+        private String status;
+        private BigDecimal amount;
+        private String currency;
+        private String customerId;
+        private String orderId;
+        private String successUrl;
+        private String cancelUrl;
+        private Long expiresAt;
+        private Long createdAt;
+        private String metadata;
+        
+        // Getters and setters
+        public String getId() { return id; }
+        public void setId(String id) { this.id = id; }
+        
+        public String getUrl() { return url; }
+        public void setUrl(String url) { this.url = url; }
+        
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+        
+        public BigDecimal getAmount() { return amount; }
+        public void setAmount(BigDecimal amount) { this.amount = amount; }
+        
+        public String getCurrency() { return currency; }
+        public void setCurrency(String currency) { this.currency = currency; }
+        
+        public String getCustomerId() { return customerId; }
+        public void setCustomerId(String customerId) { this.customerId = customerId; }
+        
+        public String getOrderId() { return orderId; }
+        public void setOrderId(String orderId) { this.orderId = orderId; }
+        
+        public String getSuccessUrl() { return successUrl; }
+        public void setSuccessUrl(String successUrl) { this.successUrl = successUrl; }
+        
+        public String getCancelUrl() { return cancelUrl; }
+        public void setCancelUrl(String cancelUrl) { this.cancelUrl = cancelUrl; }
+        
+        public Long getExpiresAt() { return expiresAt; }
+        public void setExpiresAt(Long expiresAt) { this.expiresAt = expiresAt; }
+        
+        public Long getCreatedAt() { return createdAt; }
+        public void setCreatedAt(Long createdAt) { this.createdAt = createdAt; }
+        
+        public String getMetadata() { return metadata; }
+        public void setMetadata(String metadata) { this.metadata = metadata; }
     }
 } 
