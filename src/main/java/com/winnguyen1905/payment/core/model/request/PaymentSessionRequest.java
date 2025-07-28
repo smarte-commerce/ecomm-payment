@@ -46,4 +46,17 @@ public class PaymentSessionRequest {
     private String metadata;
     
     private Long expiresInMinutes; // Session expiration time
+    
+    // Provider-specific fields
+    private String locale; // Language preference (vi, en for VNPay)
+    
+    private String orderType; // Order type classification
+    
+    private String customerIp; // Customer IP address
+    
+    private String returnUrl; // Alternative return URL
+    
+    private Boolean generateQr; // Whether to generate QR code
+    
+    private String mobileAppScheme; // Mobile app deep link scheme
 } 
