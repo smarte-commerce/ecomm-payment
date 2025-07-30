@@ -98,3 +98,8 @@ jwt:
   base64-secret: hl4gDqBxBgOSDWqBlvwFYQInjYRGAdS4lUT7Nf3Zk1nItoSQ9wSFDPU+kXHKcKUW/UKbpGv9bCsa9S/QsoFRHw==
   access_token-validity-in-seconds: 90000000
   refresh_token-validity-in-seconds: 100000000
+
+# Microservices configuration for Feign clients
+microservices:
+  orchestrator-service:
+    url: "http://ORCHESTRATOR-SERVICE"

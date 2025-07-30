@@ -1,0 +1,40 @@
+# Example configuration for VNPay and Momo payment providers
+# Copy this to your application.yaml and fill in your actual credentials
+
+payment:
+  providers:
+    vnpay:
+      enabled: true
+      tmn-code: "YOUR_VNPAY_TMN_CODE"  # Get from VNPay merchant portal
+      hash-secret: "YOUR_VNPAY_HASH_SECRET"  # Secret key from VNPay
+      api-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"  # Sandbox URL
+      # api-url: "https://vnpayment.vn/paymentv2/vpcpay.html"  # Production URL
+      return-url: "https://yourapp.com/payment/vnpay/return"
+      ipn-url: "https://yourapp.com/payment/vnpay/ipn"
+      version: "2.1.0"
+      locale: "vn"  # vn or en
+      curr-code: "VND"
+      order-type: "other"  # other, billpayment, fashion, etc.
+
+    momo:
+      enabled: true
+      partner-code: "YOUR_MOMO_PARTNER_CODE"  # Get from Momo merchant portal
+      access-key: "YOUR_MOMO_ACCESS_KEY"
+      secret-key: "YOUR_MOMO_SECRET_KEY"
+      endpoint: "https://test-payment.momo.vn/v2/gateway/api/create"  # Test endpoint
+      # endpoint: "https://payment.momo.vn/v2/gateway/api/create"  # Production endpoint
+      notify-url: "https://yourapp.com/payment/momo/ipn"
+      return-url: "https://yourapp.com/payment/momo/return"
+      request-type: "captureWallet"  # captureWallet, payWithATM, payWithCredit
+      auto-capture: true
+
+  # Webhook security
+  webhook:
+    secret: "your-webhook-secret-key"
+    timeout: 30000  # 30 seconds
+    retry-attempts: 3
+
+# Gateway service configuration
+service:
+  payment-gateway:
+    url: "http://localhost:8085"  # Your payment gateway service URL 
